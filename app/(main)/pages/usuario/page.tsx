@@ -16,35 +16,43 @@ import { classNames } from 'primereact/utils';
 import React, { useEffect, useRef, useState } from 'react';
 import { ProductService } from '../../../../demo/service/ProductService';
 import { Projeto } from '@/types';
+import { UsuarioService } from '@/service/UsuarioService';
 
 /* @todo Used 'as any' for types here. Will fix in next version due to onSelectionChange event type issue. */
 const Crud = () => {
-    let UsuarioVazio: Projeto.Usuario = {
+    let usuarioVazio: Projeto.Usuario = {
         id: 0,
-        name: '',
+        nome: '',
         login: '',
-        password: '',
-        email: ''
+        senha: '',
+        email: '',
     };
 
-    const [Usuarios, setUsuarios] = useState(null);
-    const [UsuarioDialog, setUsuarioDialog] = useState(false);
+    const [usuarios, setUsuarios] = useState(null);
+    const [usuarioDialog, setUsuarioDialog] = useState(false);
     const [deleteUsuarioDialog, setDeleteUsuarioDialog] = useState(false);
     const [deleteUsuariosDialog, setDeleteUsuariosDialog] = useState(false);
-    const [Usuario, setUsuario] = useState<Projeto.Usuario>(UsuarioVazio);
+    const [usuario, setUsuario] = useState<Projeto.Usuario>(usuarioVazio);
     const [selectedUsuarios, setSelectedUsuarios] = useState(null);
     const [submitted, setSubmitted] = useState(false);
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef<Toast>(null);
     const dt = useRef<DataTable<any>>(null);
+    const usuarioService = new UsuarioService();
 
     useEffect(() => {
-        //UsuarioService.getUsuarios().then((data) => setUsuarios(data as any));
+    //    ProductService.getProducts().then((data) => setProducts(data as any));
+    usuarioService.listarTodos()
+        .then((response) => {
+            console.log(response.data);
+            setUsuarios(response.data);
+        }).catch((error) => {
+            console.log(error);
+        })
     }, []);
 
-
     const openNew = () => {
-        setUsuario(UsuarioVazio);
+        setUsuario(usuarioVazio);
         setSubmitted(false);
         setUsuarioDialog(true);
     };
@@ -65,66 +73,64 @@ const Crud = () => {
     const saveUsuario = () => {
         setSubmitted(true);
 
-        // if (Usuario.name.trim()) {
-        //     let _Usuario = [...(Usuarios as any)];
-        //     let _Usuario = { ...Usuario };
-        //     if (Usuario.id) {
-        //         const index = findIndexById(Usuario.id);
+        // if (product.name.trim()) {
+        //     let _products = [...(products as any)];
+        //     let _product = { ...product };
+        //     if (product.id) {
+        //         const index = findIndexById(product.id);
 
-        //         _Usuarios[index] = _Usuario;
+        //         _products[index] = _product;
         //         toast.current?.show({
         //             severity: 'success',
         //             summary: 'Successful',
-        //             detail: 'Usuario Updated',
+        //             detail: 'Product Updated',
         //             life: 3000
         //         });
         //     } else {
-        //         _Usuario.id = createId();
-        //         _Usuario.image = 'Usuario-placeholder.svg';
-        //         _Usuarios.push(_Usuario);
+        //         _product.id = createId();
+        //         _product.image = 'product-placeholder.svg';
+        //         _products.push(_product);
         //         toast.current?.show({
         //             severity: 'success',
         //             summary: 'Successful',
-        //             detail: 'Usuario Created',
+        //             detail: 'Product Created',
         //             life: 3000
         //         });
         //     }
 
-        //     setUsuarios(_Usuarios as any);
-        //     setUsuarioDialog(false);
-        //     setUsuario(emptyUsuario);
+        //     setProducts(_products as any);
+        //     setProductDialog(false);
+        //     setProduct(emptyProduct);
         // }
     };
 
-    const editUsuario = (Usuario: Projeto.Usuario) => {
-        setUsuario({ ...Usuario });
+    const editUsuario = (usuario: Projeto.Usuario) => {
+        setUsuario({ ...usuario });
         setUsuarioDialog(true);
     };
-    
-    {
 
-    const confirmDeleteUsuario = (Usuario: Projeto.Usuario) => {
-        setUsuario(Usuario);
+    const confirmDeleteUsuario = (usuario: Projeto.Usuario) => {
+        setUsuario(usuario);
         setDeleteUsuarioDialog(true);
     };
 
-     const deleteUsuario = () => {
-        // let _Usuarios = (Usuarios as any)?.filter((val: any) => val.id !== Usuario.id);
-        // setUsuarios(_Usuarios);
-        // setDeleteUsuarioDialog(false);
-        // setUsuario(emptyUsuario);
+    const deleteUsuario = () => {
+        // let _products = (products as any)?.filter((val: any) => val.id !== product.id);
+        // setProducts(_products);
+        // setDeleteProductDialog(false);
+        // setProduct(emptyProduct);
         // toast.current?.show({
         //     severity: 'success',
         //     summary: 'Successful',
-        //     detail: 'Usuario Deleted',
+        //     detail: 'Product Deleted',
         //     life: 3000
         // });
-        };
+    };
 
     // const findIndexById = (id: string) => {
     //     let index = -1;
-    //     for (let i = 0; i < (Usuarios as any)?.length; i++) {
-    //         if ((Usuarios as any)[i].id === id) {
+    //     for (let i = 0; i < (products as any)?.length; i++) {
+    //         if ((products as any)[i].id === id) {
     //             index = i;
     //             break;
     //         }
@@ -150,48 +156,47 @@ const Crud = () => {
         setDeleteUsuariosDialog(true);
     };
 
-        const deleteSelectedUsuarios = () => {
-        // let _Usuarios = (Usuarios as any)?.filter((val: any) => !(selectedUsuarios as any)?.includes(val));
-        // setUsuarios(_Usuarios);
+    const deleteSelectedUsuarios = () => {
+        // let _usuarios = (usuarios as any)?.filter((val: any) => !(selectedUsuarios as any)?.includes(val));
+        // setUsuarios(_usuarios);
         // setDeleteUsuariosDialog(false);
         // setSelectedUsuarios(null);
         // toast.current?.show({
         //     severity: 'success',
         //     summary: 'Successful',
-        //     detail: 'Usuarios Deleted',
+        //     detail: 'Products Deleted',
         //     life: 3000
         // });
-        };
+    };
 
-        // const onCategoryChange = (e: RadioButtonChangeEvent) => {
-        //     let _Usuario = { ...Usuario };
-        //     _Usuario['category'] = e.value;
-        //     setUsuario(_Usuario);
-        // };
+    // const onCategoryChange = (e: RadioButtonChangeEvent) => {
+    //     let _product = { ...product };
+    //     _product['category'] = e.value;
+    //     setProduct(_product);
+    // };
 
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, name: string) => {
         const val = (e.target && e.target.value) || '';
-        let _Usuario = { ...Usuario };
-        _Usuario[`${name}`] = val;
+        let _usuario = { ...usuario };
+        _usuario[`${name}`] = val;
 
-        setUsuario(_Usuario);
+        setUsuario(_usuario);
     };
 
-    const onInputNumberChange = (e: InputNumberValueChangeEvent, name: string) => {
+    // const onInputNumberChange = (e: InputNumberValueChangeEvent, name: string) => {
     //     const val = e.value || 0;
-    //     let _Usuario = { ...Usuario };
-    //     _Usuario[`${name}`] = val;
+    //     let _product = { ...product };
+    //     _product[`${name}`] = val;
 
-    //     setUsuario(_Usuario);
-    // 
-    };
+    //     setProduct(_product);
+    // };
 
     const leftToolbarTemplate = () => {
         return (
             <React.Fragment>
-                 <div className="my-2">
-                    <Button label="New" icon="pi pi-plus" severity="success" className=" mr-2" onClick={openNew} />
-                    <Button label="Delete" icon="pi pi-trash" severity="danger" onClick={confirmDeleteSelected} disabled={!selectedUsuarios || !(selectedUsuarios as any).length} />
+                <div className="my-2">
+                    <Button label="Novo" icon="pi pi-plus" severity="success" className=" mr-2" onClick={openNew} />
+                    <Button label="Deletar" icon="pi pi-trash" severity="danger" onClick={confirmDeleteSelected} disabled={!selectedUsuarios || !(selectedUsuarios as any).length} />
                 </div>
             </React.Fragment>
         );
@@ -218,12 +223,12 @@ const Crud = () => {
     const nameBodyTemplate = (rowData: Projeto.Usuario) => {
         return (
             <>
-                <span className="p-column-title">Name</span>
-                {rowData.name}
+                <span className="p-column-title">nome</span>
+                {rowData.nome}
             </>
         );
     };
-    
+
     const loginBodyTemplate = (rowData: Projeto.Usuario) => {
         return (
             <>
@@ -241,15 +246,6 @@ const Crud = () => {
             </>
         );
     };
-    
-    const passwordBodyTemplate = (rowData: Projeto.Usuario) => {
-        return (
-            <>
-                <span className="p-column-title">Password</span>
-                {rowData.password}
-            </>
-        );
-    };
 
     const actionBodyTemplate = (rowData: Projeto.Usuario) => {
         return (
@@ -262,7 +258,7 @@ const Crud = () => {
 
     const header = (
         <div className="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-            <h5 className="m-0">Users Manager</h5>
+            <h5 className="m-0">Gerenciador de Usuários</h5>
             <span className="block mt-2 md:mt-0 p-input-icon-left">
                 <i className="pi pi-search" />
                 <InputText type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} placeholder="Search..." />
@@ -270,22 +266,22 @@ const Crud = () => {
         </div>
     );
 
-    const UsuarioDialogFooter = (
+    const usuarioDialogFooter = (
         <>
-            <Button label="Cancel" icon="pi pi-times" text onClick={hideDialog} />
-            <Button label="Save" icon="pi pi-check" text onClick={saveUsuario} />
+            <Button label="Cancelar" icon="pi pi-times" text onClick={hideDialog} />
+            <Button label="Salvar" icon="pi pi-check" text onClick={saveUsuario} />
         </>
     );
     const deleteUsuarioDialogFooter = (
         <>
-            <Button label="No" icon="pi pi-times" text onClick={hideDeleteUsuarioDialog} />
-            <Button label="Yes" icon="pi pi-check" text onClick={deleteUsuario} />
+            <Button label="Não" icon="pi pi-times" text onClick={hideDeleteUsuarioDialog} />
+            <Button label="Sim" icon="pi pi-check" text onClick={deleteUsuario} />
         </>
     );
     const deleteUsuariosDialogFooter = (
         <>
-            <Button label="No" icon="pi pi-times" text onClick={hideDeleteUsuariosDialog} />
-            <Button label="Yes" icon="pi pi-check" text onClick={deleteUsuario} />
+            <Button label="Não" icon="pi pi-times" text onClick={hideDeleteUsuariosDialog} />
+            <Button label="Sim" icon="pi pi-check" text onClick={deleteSelectedUsuarios} />
         </>
     );
 
@@ -298,7 +294,7 @@ const Crud = () => {
 
                     <DataTable
                         ref={dt}
-                        value={Usuarios}
+                        value={usuarios}
                         selection={selectedUsuarios}
                         onSelectionChange={(e) => setSelectedUsuarios(e.value as any)}
                         dataKey="id"
@@ -307,92 +303,91 @@ const Crud = () => {
                         rowsPerPageOptions={[5, 10, 25]}
                         className="datatable-responsive"
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} Usuarios"
+                        currentPageReportTemplate="Mostrando {Primeiro} a {Último} de {Total de Registros} usuarios"
                         globalFilter={globalFilter}
-                        emptyMessage="No Usuarios found."
+                        emptyMessage="Usuario não econtrado."
                         header={header}
                         responsiveLayout="scroll"
                     >
                         <Column selectionMode="multiple" headerStyle={{ width: '4rem' }}></Column>
-                        <Column field="id" header="Código" sortable body={idBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
-                        <Column field="name" header="Name" sortable body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
+                        <Column field="código" header="Código" sortable body={idBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
+                        <Column field="name" header="name" sortable body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
                         <Column field="login" header="Login" sortable body={loginBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
-                        <Column field="password" header="Password" sortable body={passwordBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
-                        
+                        <Column field="email" header="Email" sortable body={emailBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
+
                         <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                     </DataTable>
 
-                    <Dialog visible={UsuarioDialog} style={{ width: '450px' }} header="Usuario Details" modal className="p-fluid" footer={UsuarioDialogFooter} onHide={hideDialog}>
-                    
+                    <Dialog visible={usuarioDialog} style={{ width: '450px' }} header="Detalhes do Usuário" modal className="p-fluid" footer={usuarioDialogFooter} onHide={hideDialog}>
+        
                         <div className="field">
-                            <label htmlFor="name">Name</label>
+                            <label htmlFor="name">name</label>
                             <InputText
                                 id="name"
-                                value={Usuario.name}
-                                onChange={(e) => onInputChange(e, 'name')}
+                                value={usuario.nome}
+                                onChange={(e) => onInputChange(e, 'nome')}
                                 required
                                 autoFocus
                                 className={classNames({
-                                    'p-invalid': submitted && !Usuario.name
+                                    'p-invalid': submitted && !usuario.nome
                                 })}
                             />
-                            {submitted && !Usuario.name && <small className="p-invalid">Name is required.</small>}
+                            {submitted && !usuario.nome && <small className="p-invalid">name is required.</small>}
                         </div>
 
-                        
                         <div className="field">
                             <label htmlFor="login">Login</label>
                             <InputText
                                 id="login"
-                                value={Usuario.login}
+                                value={usuario.login}
                                 onChange={(e) => onInputChange(e, 'login')}
                                 required
                                 autoFocus
                                 className={classNames({
-                                    'p-invalid': submitted && !Usuario.login
+                                    'p-invalid': submitted && !usuario.login
                                 })}
                             />
-                            {submitted && !Usuario.login && <small className="p-invalid">Login is required.</small>}
+                            {submitted && !usuario.login && <small className="p-invalid">Login is required.</small>}
                         </div>
-                        
+
                         <div className="field">
-                            <label htmlFor="passwword">Password</label>
+                            <label htmlFor="senha">senha</label>
                             <InputText
-                                id="password"
-                                value={Usuario.password}
-                                onChange={(e) => onInputChange(e, 'password')}
+                                id="senha"
+                                value={usuario.senha}
+                                onChange={(e) => onInputChange(e, 'senha')}
                                 required
                                 autoFocus
                                 className={classNames({
-                                    'p-invalid': submitted && !Usuario.password
+                                    'p-invalid': submitted && !usuario.senha
                                 })}
                             />
-                            {submitted && !Usuario.password && <small className="p-invalid">Password is required.</small>}
+                            {submitted && !usuario.senha && <small className="p-invalid">senha is required.</small>}
                         </div>
-                        
+
                         <div className="field">
                             <label htmlFor="email">Email</label>
                             <InputText
-                                id="email"
-                                value={Usuario.email}
+                                id="Email"
+                                value={usuario.email}
                                 onChange={(e) => onInputChange(e, 'email')}
                                 required
                                 autoFocus
                                 className={classNames({
-                                    'p-invalid': submitted && !Usuario.email
+                                    'p-invalid': submitted && !usuario.email
                                 })}
                             />
-                            {submitted && !Usuario.email && <small className="p-invalid">Email is required.</small>}
+                            {submitted && !usuario.email && <small className="p-invalid">Email is required.</small>}
                         </div>
-                        
+            
                     </Dialog>
 
                     <Dialog visible={deleteUsuarioDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteUsuarioDialogFooter} onHide={hideDeleteUsuarioDialog}>
                         <div className="flex align-items-center justify-content-center">
                             <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
-                            {Usuario && (
+                            {usuario && (
                                 <span>
-                                    Are you sure you want to delete <b>{Usuario.name}</b>?
+                                    Tem você realmente deseja excluir usuário <b>{usuario.nome}</b>?
                                 </span>
                             )}
                         </div>
@@ -401,7 +396,7 @@ const Crud = () => {
                     <Dialog visible={deleteUsuariosDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteUsuariosDialogFooter} onHide={hideDeleteUsuariosDialog}>
                         <div className="flex align-items-center justify-content-center">
                             <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
-                            {Usuario && <span>Are you sure you want to delete the selected Usuarios?</span>}
+                            {usuario && <span>Tem você realmente deseja excluir esses usuarios? </span>}
                         </div>
                     </Dialog>
                 </div>
